@@ -16,7 +16,7 @@ export default {
 </script>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Noto+Sans+KR:wght@100;400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@100;400&display=swap');
 
 /* reset */
 * {margin:0; padding:0}
@@ -33,7 +33,7 @@ input, button, a {outline: none;}
 .btn.point {background-color: #2CA661; border:none; color:white}
 
 /* header */
-h1 {font-family: 'Fredoka One', serif;}
+h1 {font-family: 'Jua', serif;}
 
 /* page */
 .page {max-width: 1000; margin:40px auto; width:80%}

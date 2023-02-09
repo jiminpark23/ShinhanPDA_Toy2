@@ -8,10 +8,10 @@
                 <button class="btn add">Add</button>
             </div>
             <ul class="list">
-            <li v-for="todo in todos" :value="todo.text" :key="todo.text">
-                <i class="far fa-check-square"></i>         <!--yet일 때: far, done일 때: fas-->
+            <li v-for="(item, i) in todos" :key="item.text">
+                <i :class="[item.state === 'yet' ? 'far' : 'fas', 'fa-check-square']"></i>         <!--yet일 때: far, done일 때: fas-->
                 <span>
-                        {{todo.text}}
+                        {{item.text}}
                     <b>
                         <a href="">Edit</a>
                         <a href="">Del</a>
