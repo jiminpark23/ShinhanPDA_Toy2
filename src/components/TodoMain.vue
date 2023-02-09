@@ -64,12 +64,16 @@ export default {
             db.collection('todos').add({
                 text: this.addItemText, 
                 state: 'yet'
-            })
+            }).then(sn => {
+                db.collection('todos').doc(sn.id).update({
+                    id: sn.id
+                })
+            });
             // this.todos.push({
             //     text: this.addItemText, 
             //     state: 'yet'
             // }),
-            this.addItemText = ''
+            this.addItemText = '';
         },
         checkItem(index) {
             if (this.todos[index].state === 'yet') {
@@ -85,16 +89,28 @@ export default {
             this.$refs.list.children[index].className = 'editing';
         },
         editSave() {
-            this.todos[this.crrEditItem].text = this.editItemText;
+            //this.todos[this.crrEditItem].text = this.editItemText;
             this.writeState = 'add';
+            db.collection('todos')
+                .doc(this.todos[crrEditItem].id)
+                    .update({
+                        text: this.editItemText
+                    });
             this.$refs.list.children[this.crrEditItem].className = '';
         },
         delItem(index) {
-            this.todos.splice(index,1);
+            db.collection('todos').doc(this.todos[index].id).delete()
+            //this.todos.splice(index,1);
         }
     },
     mounted() {
         this.$refs.writeArea.focus();
+        db.collection('todos').get().then((result) => {
+            result.forEach((doc)=>{
+                console.log(doc.data())
+                this.todos.push(doc.data());
+        })
+    });
     },
     firestore: {
         todos: db.collection('todos')
