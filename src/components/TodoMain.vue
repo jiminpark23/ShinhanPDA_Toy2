@@ -43,6 +43,9 @@
 </template>
 
 <script>
+import {db} from '../firebase/db';
+console.log(db)
+
 export default {
     data() {
         return {
@@ -51,19 +54,21 @@ export default {
             crrEditItem: '',
             writeState: 'add',
             todos:[
-                {text: '공부하기', state: 'yet'},
-                {text: '운동하기', state: 'done'},
-                {text: '글쓰기', state: 'done'},
+                
             ]
         }
     },
     methods: {
         addItem() {
             if (this.addItemText === '') return;
-            this.todos.push({
+            db.collection('todos').add({
                 text: this.addItemText, 
                 state: 'yet'
-            }),
+            })
+            // this.todos.push({
+            //     text: this.addItemText, 
+            //     state: 'yet'
+            // }),
             this.addItemText = ''
         },
         checkItem(index) {
@@ -90,6 +95,9 @@ export default {
     },
     mounted() {
         this.$refs.writeArea.focus();
+    },
+    firestore: {
+        todos: db.collection('todos')
     }
 }
 </script>
