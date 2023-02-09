@@ -4,11 +4,11 @@
         <main>
         <div class="todos">
             <div class="write">
-                <input type="text" v-model="addItemText"/>
+                <input type="text" v-model="addItemText" @keyup.enter="addItem"/>
                 <button class="btn add" @click="addItem">Add</button>
             </div>
             <ul class="list">
-            <li v-for="(item, i) in todos" :key="item.text">
+            <li v-for="(item, i) in todos" :key="i">
                 <i :class="[item.state === 'yet' ? 'far' : 'fas', 'fa-check-square']"></i>         <!--yet일 때: far, done일 때: fas-->
                 <span>
                         {{item.text}}
@@ -38,12 +38,12 @@ export default {
     },
     methods: {
         addItem() {
+            if (this.addItemText === '') return;
             this.todos.push({
                 text: this.addItemText, 
                 state: 'yet'
             }),
-            this.addItemText = '',
-            console.log(this.todos)
+            this.addItemText = ''
         }
     }
 }
