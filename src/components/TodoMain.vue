@@ -14,7 +14,7 @@
             </div>
             <ul class="list">
             <li v-for="(item, i) in todos" :key="i">
-                <i @click="checkItem"
+                <i @click="checkItem(i)"
                     :class="[item.state === 'yet' ? 'far' : 'fas', 'fa-check-square']">
                 </i>         <!--yet일 때: far, done일 때: fas-->
                 <span>
