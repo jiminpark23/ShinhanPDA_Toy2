@@ -3,25 +3,27 @@
         <header><h1>Vue Fire todo1</h1></header>
         <main>
         <div class="todos">
-            <div class="write" v-if="writeState === 'add'">     <!-- 등록 -->
-                <input 
-                    ref="writeArea"
-                    type="text" 
-                    v-model="addItemText" 
-                    @keyup.enter="addItem"
-                />
-                <button class="btn add" @click="addItem">Add</button>
-            </div>
-            <div class="write" v-else>     <!-- 수정 -->
-                <input 
-                    ref="writeArea"
-                    type="text" 
-                    v-model="editItemText" 
-                    @keyup.enter="editSave"
-                />
-                <button class="btn add" @click="editSave">Save</button>
-            </div>
-            <ul class="list">
+            <transition name="fade">
+                <div class="write add" v-if="writeState === 'add'" key="add">     <!-- 등록 -->
+                    <input 
+                        ref="writeArea"
+                        type="text" 
+                        v-model="addItemText" 
+                        @keyup.enter="addItem"
+                    />
+                    <button class="btn add" @click="addItem">Add</button>
+                </div>
+                <div class="write edit" v-else key="edit">     <!-- 수정 -->
+                    <input 
+                        ref="writeArea"
+                        type="text" 
+                        v-model="editItemText" 
+                        @keyup.enter="editSave"
+                    />
+                    <button class="btn add" @click="editSave">Save</button>
+                </div>
+            </transition>
+            <ul class="list" ref="list">
             <li v-for="(item, i) in todos" :key="i">
                 <i @click="checkItem(i)"
                     :class="[item.state === 'yet' ? 'far' : 'fas', 'fa-check-square']">
@@ -30,7 +32,7 @@
                     {{item.text}}
                     <b>
                         <a href="" @click.prevent="editShow(i)">Edit</a>
-                        <a href="" @click.prevent="delShow(i)">Del</a>
+                        <a href="" @click.prevent="delItem(i)">Del</a>
                     </b>
                 </span>
             </li>
@@ -75,12 +77,14 @@ export default {
             this.crrEditItem = index;
             this.writeState = 'edit';
             this.editItemText = this.todos[index].text;
+            this.$refs.list.children[index].className = 'editing';
         },
         editSave() {
             this.todos[this.crrEditItem].text = this.editItemText;
             this.writeState = 'add';
+            this.$refs.list.children[this.crrEditItem].className = '';
         },
-        delShow(index) {
+        delItem(index) {
             this.todos.splice(index,1);
         }
     },
