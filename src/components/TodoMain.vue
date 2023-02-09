@@ -1,6 +1,18 @@
 <template>
     <div class="page">
-        <header><h1>Vue Fire todo1</h1></header>
+        <header><h1>Vue Fire todo1
+            <span class="pie">
+                <svg viewBox="0 0 64 64">
+                <circle class="pie" r="32" cx="32" cy="32" style="stroke-width: 64;"></circle>
+                <circle class="slice" r="32" cx="32" cy="32" 
+                :style="{
+                    strokeWidth: 64,
+                    strokeDasharray: totalTodo + ', 201',
+                    transition: 'all 0.3s linear'
+                }"></circle>
+        </svg>
+        </span>
+        </h1></header>
         <main>
         <div class="todos">
             <transition name="fade">
@@ -53,23 +65,31 @@ export default {
             editItemText: '',
             crrEditItem: '',
             writeState: 'add',
-            todos:[
-                
-            ]
+            todos:[]
+        }
+    },
+    computed: {
+        totalTodo() {
+            let totalNum = 0;   //done이 몇개인지 세기 위함
+            this.todos.forEach(item => {
+                if (item.state === 'done') totalNum++;
+            });
+            return (totalNum / this.todos.length) * 201     //비례공식
         }
     },
     methods: {
         addItem() {
             if (this.addItemText === '') return;
-            db.collection('todos').add({
+            db.collection('todos').add({    //서버측
                 text: this.addItemText, 
-                state: 'yet'
+                state: 'yet',
+                createAt: new Date(),
             }).then(sn => {
                 db.collection('todos').doc(sn.id).update({
                     id: sn.id
                 })
             });
-            // this.todos.push({
+            // this.todos.push({   //화면
             //     text: this.addItemText, 
             //     state: 'yet'
             // }),
@@ -77,9 +97,15 @@ export default {
         },
         checkItem(index) {
             if (this.todos[index].state === 'yet') {
-                this.todos[index].state = 'done'
-            } else if (this.todos[index].state === 'done'){
-                this.todos[index].state = 'yet'
+                //this.todos[index].state = 'done'
+                db.collection('todos')
+                    .doc(this.todos[index].id)
+                        .update({state: 'done'})
+            } else {//if (this.todos[index].state === 'done'){
+                //this.todos[index].state = 'yet'
+                db.collection('todos')
+                    .doc(this.todos[index].id)
+                        .update({state: 'yet'})
             }
         },
         editShow(index) {
@@ -89,31 +115,32 @@ export default {
             this.$refs.list.children[index].className = 'editing';
         },
         editSave() {
-            //this.todos[this.crrEditItem].text = this.editItemText;
-            this.writeState = 'add';
-            db.collection('todos')
-                .doc(this.todos[crrEditItem].id)
+            //this.todos[this.crrEditItem].text = this.editItemText;    //화면
+            
+            db.collection('todos')  //서버
+                .doc(this.todos[this.crrEditItem].id)
                     .update({
                         text: this.editItemText
                     });
+            this.writeState = 'add';
             this.$refs.list.children[this.crrEditItem].className = '';
         },
         delItem(index) {
-            db.collection('todos').doc(this.todos[index].id).delete()
-            //this.todos.splice(index,1);
+            db.collection('todos').doc(this.todos[index].id).delete()   //서버
+            //this.todos.splice(index,1);     //화면
         }
     },
     mounted() {
         this.$refs.writeArea.focus();
-        db.collection('todos').get().then((result) => {
-            result.forEach((doc)=>{
-                console.log(doc.data())
-                this.todos.push(doc.data());
-        })
-    });
+        // db.collection('todos').get().then((result) => {
+        //     result.forEach((doc)=>{
+        //         console.log(doc.data())
+        //         this.todos.push(doc.data());
+        //     })
+        // });
     },
-    firestore: {
-        todos: db.collection('todos')
+    firestore: {    //vuefire
+        todos: db.collection('todos').orderBy('createAt', 'desc')
     }
 }
 </script>
