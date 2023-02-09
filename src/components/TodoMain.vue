@@ -30,7 +30,7 @@
                     {{item.text}}
                     <b>
                         <a href="" @click.prevent="editShow(i)">Edit</a>
-                        <a href="">Del</a>
+                        <a href="" @click.prevent="delShow(i)">Del</a>
                     </b>
                 </span>
             </li>
@@ -74,11 +74,15 @@ export default {
         editShow(index) {
             this.crrEditItem = index;
             this.writeState = 'edit';
+            this.editItemText = this.todos[index].text;
         },
         editSave() {
             this.todos[this.crrEditItem].text = this.editItemText;
             this.writeState = 'add';
         },
+        delShow(index) {
+            this.todos.splice(index,1);
+        }
     },
     mounted() {
         this.$refs.writeArea.focus();
